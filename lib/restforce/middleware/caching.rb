@@ -92,7 +92,13 @@ module Restforce
       end
       url.normalize!
       digest = full_key? ? url.host + url.request_uri : url.request_uri
-      Digest::SHA1.hexdigest(digest)
+      Digest::SHA1.hexdigest(digest) + hashed_auth_header(env)
+    end
+
+    def hashed_auth_header(env)
+      Digest::SHA1.hexdigest(
+        env[:request_headers][Restforce::Middleware::Authorization::AUTH_HEADER]
+      )
     end
 
     def params_to_ignore
